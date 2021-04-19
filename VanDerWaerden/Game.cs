@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VanDerWaerden.Players;
 
 namespace VanDerWaerden
 {
@@ -10,80 +11,6 @@ namespace VanDerWaerden
 	{
 		public int n;
 		public int k;
-	}
-
-	public abstract class Player
-	{
-		public int n, k;
-		public List<int> playerNumbers;
-		public List<Progression> progressions;
-
-		public Player(Configuration config)
-		{
-			this.n = config.n;
-			this.k = config.k;
-			playerNumbers = new List<int>();
-			progressions = new List<Progression>();
-		}
-
-		protected abstract int Strategy(Player[] board);
-
-		public int ChooseNumber(Player[] board)
-		{
-			var chosen = Strategy(board);
-			playerNumbers.Add(chosen);
-			UpdateProgressions(chosen);
-			return chosen;
-		}
-
-		private void UpdateProgressions(int chosen)
-		{
-			foreach (var progression in progressions)
-				progression.ExtendBy(chosen);
-
-			// generate progressions of length 2
-			foreach (var number in playerNumbers)
-			{
-				if(number != chosen)
-				{
-					var pair = new Progression(Math.Abs(number - chosen))
-					{
-						number,
-						chosen
-					};
-					pair.Sort();
-					progressions.Add(pair);
-				}
-			}
-
-			Collate();
-		}
-
-		private void Collate()
-		{
-			foreach (var group in progressions.GroupBy(x => x.stride))
-			{
-				foreach (var a in group)
-					foreach (var b in group)
-					{
-						if(a.Last() == b.First())
-						{
-							var collated = new Progression(group.Key);
-							collated.AddRange(a);
-							collated.AddRange(b.Skip(1));
-							collated.Sort();
-							progressions.Add(collated);
-							progressions.Remove(a);
-							progressions.Remove(b);
-						}
-					}
-			}
-		}
-
-		private bool InRange(int i)
-		{
-			return i >= 0 && i < n;
-		}
 	}
 
 	public class Progression : List<int>
@@ -121,6 +48,10 @@ namespace VanDerWaerden
 		public Player winner;
 		public bool done;
 
+		private int? lastChosen;
+
+		public Player NotActive { get { return players.Where(x => x != active).Single(); } }
+
 		public Game(Configuration config, Player first, Player second)
 		{
 			this.n = config.n;
@@ -149,20 +80,63 @@ namespace VanDerWaerden
 		{
 			if (done)
 				return;
+			var chosen = active.ChooseNumber(this.Clone());
+			TakeNumber(chosen);
+		}
 
-			var chosen = active.ChooseNumber(board);
+		public void TakeNumber(int chosen)
+		{
+			lastChosen = chosen;
 			board[chosen] = active;
 			if (active.progressions.Any(x => x.Count >= k))
 			{
+				active = NotActive;
+				winner = active; // Misère
 				done = true;
-				winner = active;
 				return;
 			}
 
-			active = players.Where(x => x != active).Single();
+			active = NotActive;
 			if (board.All(x => x != null))
 				done = true;
 		}
-		
+
+		// undo last move
+		public void Undo()
+		{
+			if(lastChosen.HasValue)
+			{
+				board[lastChosen.Value] = null;
+				active = NotActive;
+				done = false;
+				lastChosen = null;
+				return;
+			}
+			throw new InvalidOperationException();
+		}
+
+		public List<int> AvailableNumbers()
+		{
+			return Enumerable.Range(0, board.Length).Where(i => board[i] == null).ToList();
+		}
+
+		public List<int> NotLosingNumbers()
+		{
+			var numbers = AvailableNumbers();
+			var notLosingNumbers = new List<int>();
+			foreach (var i in numbers)
+			{
+				TakeNumber(i);
+				if (!done)
+					notLosingNumbers.Add(i);
+				Undo();
+			}
+			return notLosingNumbers;
+		} 
+
+		public Game Clone()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

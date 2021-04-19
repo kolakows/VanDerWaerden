@@ -42,11 +42,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Players\MCTS\Constants.cs" />
     <Compile Include="Game.cs" />
-    <Compile Include="MCTS.cs" />
-    <Compile Include="Players\Random.cs" />
+    <Compile Include="Players\MCTS\MCTS.cs" />
+    <Compile Include="Players\MCTS\MCTSRandomPlayer.cs" />
+    <Compile Include="Players\Player.cs" />
+    <Compile Include="Players\Random\Random.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Players\MCTS\TreeNode.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
