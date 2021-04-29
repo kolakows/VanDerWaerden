@@ -64,24 +64,54 @@ namespace VanDerWaerden
 			done = false;
 		}
 
-		public void Play()
+		public int Play(bool verbose = false)
 		{
 			while (!done)
-				Step();
-			Console.WriteLine($"And the winner is {(active == first ? "first" : "second")}");
-			Console.WriteLine($"Winning progression {active.progressions.Where(x => x.Count >= k).First()}");
-			Console.WriteLine();
-			Console.WriteLine($"Board: {string.Join(" ", Enumerable.Range(0, n).Select(x => x.ToString()))}");
-			Console.WriteLine($"First player numbers: {string.Join(" ",first.playerNumbers.Select(x => x.ToString()))}");
-			Console.WriteLine($"Second player numbers: {string.Join(" ",second.playerNumbers.Select(x => x.ToString()))}");
+				Step(verbose);
+
+			int result = 0;
+			if(verbose)
+			{ 
+				if(NotActive.progressions.Any(x => x.Count >= k))
+				{
+					result = active == first? 1 : 2;
+					Console.Write("And the winner is ");
+					Console.ForegroundColor = result == 1 ? ConsoleColor.Red : ConsoleColor.Blue; 
+					Console.WriteLine($"{(result == 1 ? "first" : "second")}");
+					Console.ForegroundColor = ConsoleColor.White;
+					Console.Write("Losing progression ");
+					Console.ForegroundColor = result == 1 ? ConsoleColor.Blue : ConsoleColor.Red;
+					Console.WriteLine($"{NotActive.progressions.Where(x => x.Count >= k).First()}");
+					Console.ForegroundColor = ConsoleColor.White;
+					Console.WriteLine();
+				}
+				else
+					Console.WriteLine("DRAW!");
+			}
+
+			return result;
 		}
 
-		public void Step()
+		public void Step(bool verbose = false)
 		{
 			if (done)
 				return;
 			var chosen = active.ChooseNumber(this.Clone());
 			TakeNumber(chosen);
+			if(verbose)
+			{
+				for(int i = 0; i < this.n; i++)
+				{
+					Console.ForegroundColor = board[i] == null ? ConsoleColor.White : board[i] == first ? ConsoleColor.Red : ConsoleColor.Blue;
+					Console.Write($"{i} ");
+				}
+				Console.ForegroundColor = board[chosen] == first ? ConsoleColor.Red : ConsoleColor.Blue;
+				Console.Write($" - {chosen} - ");
+				Console.ForegroundColor = ConsoleColor.White;
+				Console.Write("Press key...");
+				Console.ReadLine();
+
+			}
 		}
 
 		public void TakeNumber(int chosen)
@@ -136,7 +166,7 @@ namespace VanDerWaerden
 
 		public Game Clone()
 		{
-			throw new NotImplementedException();
+			return new Game(new Configuration() { n = this.n, k = this.k }, first, second) { board = this.board };
 		}
 	}
 }

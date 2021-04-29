@@ -15,8 +15,9 @@ namespace VanDerWaerden.Players
 			Random = new Random(seed);
 		}
 
-		protected override int Strategy(Player[] board)
+		protected override int Strategy(Game game)
 		{
+			var board = game.board;
 			var freeIndices = Enumerable.Range(0, board.Length).Where(i => board[i] == null).ToList();
 			return freeIndices[Random.Next(freeIndices.Count)];
 		}
