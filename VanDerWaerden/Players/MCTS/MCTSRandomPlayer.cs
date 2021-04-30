@@ -6,18 +6,18 @@ using System.Threading.Tasks;
 
 namespace VanDerWaerden.Players.MCTS
 {
-	public class MCTSRandomPlayer : MCTS
-	{
-		public MCTSRandomPlayer(Configuration config, int seed, int rolloutLimit) : base(config, seed, rolloutLimit)
-		{
-		}
+    public class MCTSRandomPlayer : MCTS
+    {
+        public MCTSRandomPlayer(Configuration config, int seed, int rolloutLimit) : base(config, seed, rolloutLimit)
+        {
+        }
 
-		protected override MoveSelection MoveSelection { get => MoveSelection.BestScore; }
+        protected override MoveSelection MoveSelection { get => MoveSelection.BestScore; }
 
-		public override TreeNode SelectNextNode(TreeNode treeNode)
-		{
-			throw new NotImplementedException();
-		}
+        public override TreeNode SelectNextNode(TreeNode treeNode)
+        {
+            throw new NotImplementedException();
+        }
 
-	}
+    }
 }
