@@ -14,6 +14,7 @@ namespace VanDerWaerden
     public class Progression : List<int>
     {
         public int stride;
+        public bool extended;
 
         public Progression(int stride)
         {
@@ -22,10 +23,17 @@ namespace VanDerWaerden
 
         public void ExtendBy(int number)
         {
+            extended = false;
             if (this.Last() + stride == number)
-                this.Add(number);
+            {
+                Add(number);
+                extended = true;
+            }
             if (this.First() - stride == number)
-                this.Insert(0, number);
+            {
+                Insert(0, number);
+                extended = true;
+            }
         }
 
         public override string ToString()
@@ -39,16 +47,15 @@ namespace VanDerWaerden
         public int n, k;
         // indexing from 0 to n-1
         public Player[] board;
-        public List<Player> players;
         public Player first;
         public Player second;
         public Player active;
         public Player winner;
         public bool done;
 
-        private int? lastChosen;
+        public int? lastChosen; // TODO: Why it was private, is there some good reason for that?
 
-        public Player NotActive { get { return players.Where(x => x != active).Single(); } }
+        public Player NotActive { get { if (active == first) return second; else return first; } }
 
         public Game(Configuration config, Player first, Player second)
         {
@@ -58,7 +65,6 @@ namespace VanDerWaerden
             active = first;
             this.first = first;
             this.second = second;
-            players = new List<Player> { first, second };
             done = false;
         }
 
@@ -117,15 +123,15 @@ namespace VanDerWaerden
         {
             lastChosen = chosen;
             board[chosen] = active;
+            active = NotActive;
+
             if (active.progressions.Any(x => x.Count >= k))
             {
-                active = NotActive;
                 winner = active; // Misère
                 done = true;
                 return;
             }
 
-            active = NotActive;
             if (board.All(x => x != null))
                 done = true;
         }

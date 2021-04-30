@@ -7,13 +7,15 @@ namespace VanDerWaerden.Players
     public abstract class Player
     {
         public int n, k;
+        public int id;
         public List<int> playerNumbers;
         public List<Progression> progressions;
 
-        public Player(Configuration config)
+        public Player(Configuration config, int id)
         {
             n = config.n;
             k = config.k;
+            this.id = id;
             playerNumbers = new List<int>();
             progressions = new List<Progression>();
         }
@@ -64,6 +66,7 @@ namespace VanDerWaerden.Players
                             collated.AddRange(a);
                             collated.AddRange(b.Skip(1));
                             collated.Sort();
+                            collated.extended = a.extended || b.extended;
                             progressions.Add(collated);
                             progressions.Remove(a);
                             progressions.Remove(b);
@@ -76,5 +79,7 @@ namespace VanDerWaerden.Players
         {
             return i >= 0 && i < n;
         }
+
+        public override bool Equals(object obj) => obj is Player player && id == player.id;
     }
 }

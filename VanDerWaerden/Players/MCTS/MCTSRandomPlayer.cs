@@ -8,7 +8,7 @@ namespace VanDerWaerden.Players.MCTS
 {
     public class MCTSRandomPlayer : MCTS
     {
-        public MCTSRandomPlayer(Configuration config, int seed, int rolloutLimit) : base(config, seed, rolloutLimit)
+        public MCTSRandomPlayer(Configuration config, int id, int seed, int rolloutLimit) : base(config, id, seed, rolloutLimit)
         {
         }
 

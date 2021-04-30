@@ -7,7 +7,7 @@ namespace VanDerWaerden.Players
     {
         public Random Random { get; set; }
 
-        public RandomPlayer(Configuration config, int seed) : base(config)
+        public RandomPlayer(Configuration config, int id, int seed) : base(config, id)
         {
             Random = new Random(seed);
         }

@@ -16,7 +16,7 @@ namespace VanDerWaerden.Players.MCTS
         internal int Iterations { get; set; }
         abstract protected MoveSelection MoveSelection { get; }
 
-        public MCTS(Configuration config, int seed, int rolloutLimit) : base(config)
+        public MCTS(Configuration config, int id, int seed, int rolloutLimit) : base(config, id)
         {
             Generator = new Random(seed);
             RolloutLimit = rolloutLimit;
