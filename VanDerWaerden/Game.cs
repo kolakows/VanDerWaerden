@@ -70,11 +70,12 @@ namespace VanDerWaerden
 				Step(verbose);
 
 			int result = 0;
-			if(verbose)
+			if (winner != null)
+				result = winner == first ? 1 : 2;
+			if (verbose)
 			{ 
 				if(NotActive.progressions.Any(x => x.Count >= k))
 				{
-					result = active == first? 1 : 2;
 					Console.Write("And the winner is ");
 					Console.ForegroundColor = result == 1 ? ConsoleColor.Red : ConsoleColor.Blue; 
 					Console.WriteLine($"{(result == 1 ? "first" : "second")}");
