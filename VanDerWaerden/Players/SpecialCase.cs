@@ -8,10 +8,6 @@ namespace VanDerWaerden.Players
 
         protected override int Strategy(Game game)
         {
-            if (this == game.first)
-            {
-                throw new InvalidOperationException("Special case strategy is for second player only!");
-            }
             int prev = (int)game.lastChosen;
             int chosen = n - prev + 1;
             if (game.board[chosen] != null)

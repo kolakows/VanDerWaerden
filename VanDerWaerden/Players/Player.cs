@@ -8,6 +8,8 @@ namespace VanDerWaerden.Players
     {
         public int n, k;
         public int id;
+        public ConsoleColor color;
+        public string name;
         public List<int> playerNumbers;
         public List<Progression> progressions;
 
@@ -16,6 +18,16 @@ namespace VanDerWaerden.Players
             n = config.n;
             k = config.k;
             this.id = id;
+            if (id == 0)
+            {
+                name = "first";
+                color = ConsoleColor.Red;
+            }
+            else
+            {
+                name = "second";
+                color = ConsoleColor.Blue;
+            }
             playerNumbers = new List<int>();
             progressions = new List<Progression>();
         }

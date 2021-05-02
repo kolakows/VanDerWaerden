@@ -64,17 +64,8 @@ namespace VanDerWaerden.Players
             double allowed = 0.5;
             game.active = game.NotActive; // switch sides, imagine the opponent
             game.TakeNumber(m);
-            if (!game.done)
-            {
-                foreach (var p in game.active.progressions)
-                {
-                    if (p.extended)
-                    {
-                        allowed = 0;
-                    }
-                }
-            }
-            else allowed = 0;
+            if (game.done && game.winner == this) allowed = 0; // the opponent loses the game
+            //if (game.active.progressions.Any(p => p.extended)) allowed = 0; // at least one of opponent's progressions increased
             game.Undo();
             game.active = this;
             return allowed;
@@ -83,10 +74,31 @@ namespace VanDerWaerden.Players
         // h3(m) = 1/(3+p), gdzie p jest ilością liczb, które będą dla nas niedozwolone w kolejnym ruchu po wybraniu liczby m
         private double h3(Game game, int m)
         {
+            Console.WriteLine($"This heuristic player: {id}.");
             game.TakeNumber(m);
-            var board = game.board;
-            int p = Enumerable.Range(0, board.Length).Where(i => board[i] != null).Count<int>();
+            game.PrintBoard(m);
+            var nextNumbers = game.AvailableNumbers();
+            int p = 0;
+            Console.WriteLine($"Game active player: {game.active.id}");
+            foreach (int x in nextNumbers)
+            {
+                game.active = this;
+                Console.WriteLine($"Game switched active player: {game.active.id}");
+                game.TakeNumber(x);
+                game.PrintBoard(x);
+                if (game.done && game.winner != this)
+                {
+                    p++; // we lose after choosing m and x
+                    Console.WriteLine($"Player lose after choosing x: {x}.");
+                }
+                game.Undo();
+                Console.WriteLine($"Game active player after undo: {game.active.id}");
+            }
+            Console.WriteLine($"Game active player after x loop: {game.active.id}");
+            game.active = this;
+            Console.WriteLine($"Game switched active player: {game.active.id}");
             game.Undo();
+            Console.WriteLine($"Game active player after undo: {game.active.id}");
             return 1.0 / (3.0 + p);
         }
     }

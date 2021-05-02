@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VanDerWaerden.Players.MCTS
+namespace VanDerWaerden.Players
 {
-    public class MCTSRandomPlayer : MCTS
+    public class MCTSRandomPlayer : MCTS.MCTS
     {
         public MCTSRandomPlayer(Configuration config, int id, int seed, int rolloutLimit) : base(config, id, seed, rolloutLimit)
         {

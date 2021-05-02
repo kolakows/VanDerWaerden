@@ -75,17 +75,17 @@ namespace VanDerWaerden
 
             int result = 0;
             if (winner != null)
-                result = winner == first ? 1 : 2;
+                result = winner.id;
             if (verbose)
             {
                 if (NotActive.progressions.Any(x => x.Count >= k))
                 {
                     Console.Write("And the winner is ");
-                    Console.ForegroundColor = result == 1 ? ConsoleColor.Red : ConsoleColor.Blue;
-                    Console.WriteLine($"{(result == 1 ? "first" : "second")}");
+                    Console.ForegroundColor = winner.color;
+                    Console.WriteLine($"{winner.name}");
                     Console.ForegroundColor = ConsoleColor.White;
                     Console.Write("Losing progression ");
-                    Console.ForegroundColor = result == 1 ? ConsoleColor.Blue : ConsoleColor.Red;
+                    Console.ForegroundColor = winner.id == 0 ? second.color : first.color;
                     Console.WriteLine($"{NotActive.progressions.Where(x => x.Count >= k).First()}");
                     Console.ForegroundColor = ConsoleColor.White;
                     Console.WriteLine();
@@ -101,22 +101,26 @@ namespace VanDerWaerden
         {
             if (done)
                 return;
-            var chosen = active.ChooseNumber(this.Clone());
+            int chosen = active.ChooseNumber(this.Clone());
             TakeNumber(chosen);
             if (verbose)
             {
-                for (int i = 0; i < this.n; i++)
-                {
-                    Console.ForegroundColor = board[i] == null ? ConsoleColor.White : board[i] == first ? ConsoleColor.Red : ConsoleColor.Blue;
-                    Console.Write($"{i} ");
-                }
-                Console.ForegroundColor = board[chosen] == first ? ConsoleColor.Red : ConsoleColor.Blue;
-                Console.Write($" - {chosen} - ");
-                Console.ForegroundColor = ConsoleColor.White;
+                PrintBoard(chosen);
                 Console.Write("Press key...");
                 Console.ReadLine();
-
             }
+        }
+
+        public void PrintBoard(int chosen)
+        {
+            for (int i = 0; i < n; i++)
+            {
+                Console.ForegroundColor = board[i] == null ? ConsoleColor.White : board[i].color;
+                Console.Write($"{i} ");
+            }
+            Console.ForegroundColor = board[chosen].color;
+            Console.Write($" - {chosen} - ");
+            Console.ForegroundColor = ConsoleColor.White;
         }
 
         public void TakeNumber(int chosen)

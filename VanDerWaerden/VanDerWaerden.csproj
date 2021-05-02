@@ -49,7 +49,7 @@
     <Compile Include="Players\MCTS\MCTS.cs" />
     <Compile Include="Players\MCTS\MCTSRandomPlayer.cs" />
     <Compile Include="Players\Player.cs" />
-    <Compile Include="Players\Random\Random.cs" />
+    <Compile Include="Players\Random.cs" />
     <Compile Include="Players\SpecialCase.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
