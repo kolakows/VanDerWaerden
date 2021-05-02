@@ -69,7 +69,7 @@ namespace VanDerWaerden.Players.MCTS
                         return -1;
                 return 0;
             }
-            throw new InvalidOperationException();
+            throw new InvalidOperationException("You cannot score an unfinished game!");
         }
 
         private Game Rollout(TreeNode node)

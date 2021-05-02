@@ -52,8 +52,8 @@ namespace VanDerWaerden
         public Player active;
         public Player winner;
         public bool done;
-
-        public int? lastChosen; // TODO: Why it was private, is there some good reason for that?
+        public int? lastChosen;
+        private int? prevChosen;
 
         public Player NotActive { get { if (active == first) return second; else return first; } }
 
@@ -66,6 +66,7 @@ namespace VanDerWaerden
             this.first = first;
             this.second = second;
             done = false;
+            winner = null;
         }
 
         public int Play(bool verbose = false)
@@ -73,12 +74,12 @@ namespace VanDerWaerden
             while (!done)
                 Step(verbose);
 
-            int result = 0;
+            int result = 2; // draw
             if (winner != null)
                 result = winner.id;
             if (verbose)
             {
-                if (NotActive.progressions.Any(x => x.Count >= k))
+                if (result < 2)
                 {
                     Console.Write("And the winner is ");
                     Console.ForegroundColor = winner.color;
@@ -99,8 +100,6 @@ namespace VanDerWaerden
 
         public void Step(bool verbose = false)
         {
-            if (done)
-                return;
             int chosen = active.ChooseNumber(this.Clone());
             TakeNumber(chosen);
             if (verbose)
@@ -125,17 +124,19 @@ namespace VanDerWaerden
 
         public void TakeNumber(int chosen)
         {
+            prevChosen = lastChosen;
             lastChosen = chosen;
             board[chosen] = active;
-            active = NotActive;
 
             if (active.progressions.Any(x => x.Count >= k))
             {
+                active = NotActive;
                 winner = active; // Misère
                 done = true;
                 return;
             }
 
+            active = NotActive;
             if (board.All(x => x != null))
                 done = true;
         }
@@ -148,10 +149,11 @@ namespace VanDerWaerden
                 board[lastChosen.Value] = null;
                 active = NotActive;
                 done = false;
-                lastChosen = null;
+                lastChosen = prevChosen;
+                prevChosen = null;
                 return;
             }
-            throw new InvalidOperationException();
+            throw new InvalidOperationException("There is no move to undo!");
         }
 
         public List<int> AvailableNumbers()
@@ -159,23 +161,31 @@ namespace VanDerWaerden
             return Enumerable.Range(0, board.Length).Where(i => board[i] == null).ToList();
         }
 
-        public List<int> NotLosingNumbers()
+        public List<int> LosingNumbers()
         {
-            var numbers = AvailableNumbers();
-            var notLosingNumbers = new List<int>();
-            foreach (var i in numbers)
+            List<int> numbers = AvailableNumbers();
+            List<int> losingNumbers = new List<int>();
+            foreach (int i in numbers)
             {
                 TakeNumber(i);
-                if (!done)
-                    notLosingNumbers.Add(i);
+                if (done && winner != null && winner.id != active.id)
+                    losingNumbers.Add(i);
                 Undo();
             }
-            return notLosingNumbers;
+            return losingNumbers;
         }
 
         public Game Clone()
         {
-            return new Game(new Configuration() { n = this.n, k = this.k }, first, second) { board = this.board };
+            return new Game(new Configuration() { n = this.n, k = this.k }, first, second)
+            {
+                board = this.board,
+                lastChosen = this.lastChosen,
+                prevChosen = this.prevChosen,
+                done = this.done,
+                winner = this.winner,
+                active = this.active
+            };
         }
     }
 }
