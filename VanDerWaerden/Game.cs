@@ -1,173 +1,191 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using VanDerWaerden.Players;
 
 namespace VanDerWaerden
 {
-	public struct Configuration
-	{
-		public int n;
-		public int k;
-	}
+    public struct Configuration
+    {
+        public int n;
+        public int k;
+    }
 
-	public class Progression : List<int>
-	{
-		public int stride;
+    public class Progression : List<int>
+    {
+        public int stride;
+        public bool extended;
 
-		public Progression(int stride)
-		{
-			this.stride = stride;
-		}
+        public Progression(int stride)
+        {
+            this.stride = stride;
+        }
 
-		public void ExtendBy(int number)
-		{
-			if (this.Last() + stride == number)
-				this.Add(number);
-			if (this.First() - stride == number)
-				this.Insert(0, number);
-		}
+        public void ExtendBy(int number)
+        {
+            extended = false;
+            if (this.Last() + stride == number)
+            {
+                Add(number);
+                extended = true;
+            }
+            if (this.First() - stride == number)
+            {
+                Insert(0, number);
+                extended = true;
+            }
+        }
 
-		public override string ToString()
-		{
-			return string.Join(" ", this.Select(x => x.ToString()).ToArray());
-		}
-	}
+        public override string ToString()
+        {
+            return string.Join(" ", this.Select(x => x.ToString()).ToArray());
+        }
+    }
 
-	public class Game
-	{
-		public int n, k;
-		// indexing from 0 to n-1
-		public Player[] board;
-		public List<Player> players;
-		public Player first;
-		public Player second;
-		public Player active;
-		public Player winner;
-		public bool done;
+    public class Game
+    {
+        public int n, k;
+        // indexing from 0 to n-1
+        public Player[] board;
+        public Player first;
+        public Player second;
+        public Player active;
+        public Player winner;
+        public bool done;
+        public int? lastChosen;
+        private int? prevChosen;
 
-		private int? lastChosen;
+        public Player NotActive { get { if (active == first) return second; else return first; } }
 
-		public Player NotActive { get { return players.Where(x => x != active).Single(); } }
+        public Game(Configuration config, Player first, Player second)
+        {
+            n = config.n;
+            k = config.k;
+            board = new Player[n];
+            active = first;
+            this.first = first;
+            this.second = second;
+            done = false;
+            winner = null;
+        }
 
-		public Game(Configuration config, Player first, Player second)
-		{
-			this.n = config.n;
-			this.k = config.k;
-			board = new Player[n];
-			active = first;
-			this.first = first;
-			this.second = second;
-			players = new List<Player> { first, second };
-			done = false;
-		}
+        public int Play(bool verbose = false)
+        {
+            while (!done)
+                Step(verbose);
 
-		public int Play(bool verbose = false)
-		{
-			while (!done)
-				Step(verbose);
+            int result = 2; // draw
+            if (winner != null)
+                result = winner.id;
+            if (verbose)
+            {
+                if (result < 2)
+                {
+                    Console.Write("And the winner is ");
+                    Console.ForegroundColor = winner.color;
+                    Console.WriteLine($"{winner.name}");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.Write("Losing progression ");
+                    Console.ForegroundColor = winner.id == 0 ? second.color : first.color;
+                    Console.WriteLine($"{NotActive.progressions.Where(x => x.Count >= k).First()}");
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.WriteLine();
+                }
+                else
+                    Console.WriteLine("DRAW!");
+            }
 
-			int result = 0;
-			if (winner != null)
-				result = winner == first ? 1 : 2;
-			if (verbose)
-			{ 
-				if(NotActive.progressions.Any(x => x.Count >= k))
-				{
-					Console.Write("And the winner is ");
-					Console.ForegroundColor = result == 1 ? ConsoleColor.Red : ConsoleColor.Blue; 
-					Console.WriteLine($"{(result == 1 ? "first" : "second")}");
-					Console.ForegroundColor = ConsoleColor.White;
-					Console.Write("Losing progression ");
-					Console.ForegroundColor = result == 1 ? ConsoleColor.Blue : ConsoleColor.Red;
-					Console.WriteLine($"{NotActive.progressions.Where(x => x.Count >= k).First()}");
-					Console.ForegroundColor = ConsoleColor.White;
-					Console.WriteLine();
-				}
-				else
-					Console.WriteLine("DRAW!");
-			}
+            return result;
+        }
 
-			return result;
-		}
+        public void Step(bool verbose = false)
+        {
+            int chosen = active.ChooseNumber(this.Clone());
+            TakeNumber(chosen);
+            if (verbose)
+            {
+                PrintBoard(chosen);
+                Console.Write("Press key...");
+                Console.ReadLine();
+            }
+        }
 
-		public void Step(bool verbose = false)
-		{
-			if (done)
-				return;
-			var chosen = active.ChooseNumber(this.Clone());
-			TakeNumber(chosen);
-			if(verbose)
-			{
-				for(int i = 0; i < this.n; i++)
-				{
-					Console.ForegroundColor = board[i] == null ? ConsoleColor.White : board[i] == first ? ConsoleColor.Red : ConsoleColor.Blue;
-					Console.Write($"{i} ");
-				}
-				Console.ForegroundColor = board[chosen] == first ? ConsoleColor.Red : ConsoleColor.Blue;
-				Console.Write($" - {chosen} - ");
-				Console.ForegroundColor = ConsoleColor.White;
-				Console.Write("Press key...");
-				Console.ReadLine();
+        public void PrintBoard(int chosen)
+        {
+            for (int i = 0; i < n; i++)
+            {
+                Console.ForegroundColor = board[i] == null ? ConsoleColor.White : board[i].color;
+                Console.Write($"{i} ");
+            }
+            Console.ForegroundColor = board[chosen].color;
+            Console.Write($" - {chosen} - ");
+            Console.ForegroundColor = ConsoleColor.White;
+        }
 
-			}
-		}
+        public void TakeNumber(int chosen)
+        {
+            prevChosen = lastChosen;
+            lastChosen = chosen;
+            board[chosen] = active;
 
-		public void TakeNumber(int chosen)
-		{
-			lastChosen = chosen;
-			board[chosen] = active;
-			if (active.progressions.Any(x => x.Count >= k))
-			{
-				active = NotActive;
-				winner = active; // Misère
-				done = true;
-				return;
-			}
+            if (active.progressions.Any(x => x.Count >= k))
+            {
+                active = NotActive;
+                winner = active; // Misère
+                done = true;
+                return;
+            }
 
-			active = NotActive;
-			if (board.All(x => x != null))
-				done = true;
-		}
+            active = NotActive;
+            if (board.All(x => x != null))
+                done = true;
+        }
 
-		// undo last move
-		public void Undo()
-		{
-			if(lastChosen.HasValue)
-			{
-				board[lastChosen.Value] = null;
-				active = NotActive;
-				done = false;
-				lastChosen = null;
-				return;
-			}
-			throw new InvalidOperationException();
-		}
+        // undo last move
+        public void Undo()
+        {
+            if (lastChosen.HasValue)
+            {
+                board[lastChosen.Value] = null;
+                active = NotActive;
+                done = false;
+                lastChosen = prevChosen;
+                prevChosen = null;
+                return;
+            }
+            throw new InvalidOperationException("There is no move to undo!");
+        }
 
-		public List<int> AvailableNumbers()
-		{
-			return Enumerable.Range(0, board.Length).Where(i => board[i] == null).ToList();
-		}
+        public List<int> AvailableNumbers()
+        {
+            return Enumerable.Range(0, board.Length).Where(i => board[i] == null).ToList();
+        }
 
-		public List<int> NotLosingNumbers()
-		{
-			var numbers = AvailableNumbers();
-			var notLosingNumbers = new List<int>();
-			foreach (var i in numbers)
-			{
-				TakeNumber(i);
-				if (!done)
-					notLosingNumbers.Add(i);
-				Undo();
-			}
-			return notLosingNumbers;
-		} 
+        public List<int> LosingNumbers()
+        {
+            List<int> numbers = AvailableNumbers();
+            List<int> losingNumbers = new List<int>();
+            foreach (int i in numbers)
+            {
+                TakeNumber(i);
+                if (done && winner != null && winner.id != active.id)
+                    losingNumbers.Add(i);
+                Undo();
+            }
+            return losingNumbers;
+        }
 
-		public Game Clone()
-		{
-			return new Game(new Configuration() { n = this.n, k = this.k }, first, second) { board = this.board };
-		}
-	}
+        public Game Clone()
+        {
+            return new Game(new Configuration() { n = this.n, k = this.k }, first, second)
+            {
+                board = this.board,
+                lastChosen = this.lastChosen,
+                prevChosen = this.prevChosen,
+                done = this.done,
+                winner = this.winner,
+                active = this.active
+            };
+        }
+    }
 }
