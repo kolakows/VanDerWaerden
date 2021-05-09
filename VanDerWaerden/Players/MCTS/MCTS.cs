@@ -9,14 +9,16 @@ namespace VanDerWaerden.Players.MCTS
 {
     public abstract class MCTS : Player
     {
-        private Random Generator { get; set; }
+        protected Random Generator { get; set; }
         private TreeNode Root { get; set; }
-        private int RolloutLimit { get; set; }
-        private Configuration Config { get; set; }
+        protected int RolloutLimit { get; set; }
+        protected Configuration Config { get; set; }
         internal int Iterations { get; set; }
         abstract protected MoveSelection MoveSelection { get; }
 
-        public MCTS(Configuration config, int id, int seed, int rolloutLimit) : base(config, id)
+		public abstract TreeNode SelectNextNode(TreeNode treeNode);
+
+		public MCTS(Configuration config, int id, int seed, int rolloutLimit) : base(config, id)
         {
             Generator = new Random(seed);
             RolloutLimit = rolloutLimit;
@@ -30,25 +32,18 @@ namespace VanDerWaerden.Players.MCTS
             {
                 currNode = SelectNextNode(currNode);
             }
-
-            // take winning move if possible
-            for (int i = 0; i < Config.n; i++)
-            {
-                // !!!!!!!!!!!! misere, we avoid done games
-                if (currNode.Children[i] != null && currNode.Children[i].Game.done)
-                {
-                    currNode = currNode.Children[i];
-                    currNode.PropagadeScoreUp(Score(currNode.Game));
-                    return;
-                }
-            }
-
-            // if there wasnt a winning move then
-
+           
             var game = currNode.Game.Clone(); //create new child node
             var unvisitedChildren = game.AvailableNumbers();
+			
+			// avoid losing numbers
+			var losingChildren = game.LosingNumbers();
+			foreach (var number in losingChildren)
+				unvisitedChildren.Remove(number);
+			
+			// choose 
             var chosen = unvisitedChildren[Generator.Next(unvisitedChildren.Count)];
-            game.TakeNumber(chosen);
+            game.ForcedStep(chosen);
 
             var child = currNode.CreateChild(game);
             var rollout = Rollout(child);
@@ -86,11 +81,9 @@ namespace VanDerWaerden.Players.MCTS
         {
             var numbers = game.AvailableNumbers();
             var move = numbers[Generator.Next(numbers.Count)];
-            game.TakeNumber(move);
+            game.ForcedStep(move);
             return move;
         }
-
-        public abstract TreeNode SelectNextNode(TreeNode treeNode);
 
         protected override int Strategy(Game game)
         {
@@ -150,5 +143,11 @@ namespace VanDerWaerden.Players.MCTS
             Generator = new Random(seed);
         }
 
-    }
+		public void PrintGameSearchTree()
+		{
+			Console.WriteLine("---MCTS search tree---");
+			Root.PrintPretty();
+		}
+
+	}
 }

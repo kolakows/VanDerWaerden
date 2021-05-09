@@ -38,8 +38,12 @@ namespace VanDerWaerden
 
             for (int i = 0; i < game.n; i++)
             {
-                if (game.board[i] != null)
+                if (game.Board[i] != null)
                     ActionsTaken++;
+
+				// count losing actions as tested
+				// SPEEDUP: remember which moves are losing, then simplify check in MCTS class
+				ActionsTaken += game.LosingNumbers().Count;
             }
         }
 
@@ -87,5 +91,30 @@ namespace VanDerWaerden
             }
             return sb.ToString();
         }
-    }
+
+		public void PrintPretty(int index = 0, string indent = "", bool last = false)
+		{
+			Console.Write(indent);
+			if (last)
+			{
+				Console.Write("\\-");
+				indent += "  ";
+			}
+			else
+			{
+				Console.Write("|-");
+				indent += "| ";
+			}
+			if(Parent != null)
+				Console.WriteLine($"Take {index+1}, Total score: {CumulativeScore}, Mean score: {MeanScore}");
+
+			int lastChild = 0;
+			for (int i = 0; i < Children.Length; i++)
+				if (Children[i] != null)
+					lastChild = i;
+			for (int i = 0; i < Children.Length; i++)
+				if(Children[i] != null)
+					Children[i].PrintPretty(i, indent, i == lastChild);
+		}
+	}
 }
