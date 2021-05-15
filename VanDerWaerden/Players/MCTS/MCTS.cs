@@ -18,6 +18,7 @@ namespace VanDerWaerden.Players.MCTS
 
         public MCTS(Configuration config, int id, int seed, int rolloutLimit) : base(config, id)
         {
+            Config = config;
             Generator = new Random(seed);
             RolloutLimit = rolloutLimit;
         }
