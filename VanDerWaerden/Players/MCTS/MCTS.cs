@@ -33,19 +33,30 @@ namespace VanDerWaerden.Players.MCTS
             {
                 currNode = SelectNextNode(currNode);
             }
-           
+
+			if (currNode.Game.done)
+			{
+				currNode.PropagadeScoreUp(Score(currNode.Game));
+				return;
+			}
+
             var game = currNode.Game.Clone(); //create new child node
-            var unvisitedChildren = game.AvailableNumbers();
+            var availableNumbers = game.AvailableNumbers();
+
+			// remove already visited children
+			var unvisitedChildren = availableNumbers.Where(i => currNode.Children[i] == null).ToList();
 			
-			// avoid losing numbers
+			// avoid losing numbers if possible
 			var losingChildren = game.LosingNumbers();
-			foreach (var number in losingChildren)
-				unvisitedChildren.Remove(number);
+			if(unvisitedChildren.Count > losingChildren.Count)
+				foreach (var number in losingChildren)
+					unvisitedChildren.Remove(number);
 			
 			// choose 
             var chosen = unvisitedChildren[Generator.Next(unvisitedChildren.Count)];
             game.ForcedStep(chosen);
 
+			// rollout and propagate score up the tree
             var child = currNode.CreateChild(game);
             var rollout = Rollout(child);
             var score = Score(rollout);

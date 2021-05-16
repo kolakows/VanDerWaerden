@@ -21,7 +21,7 @@ namespace Tests
 			var p2 = new MCTSRandomPlayer(config: gameConfiguration, id: 1, seed: 420, rolloutLimit: 10000);
 
 			var game = new Game(gameConfiguration, p1, p2);
-			game.Play(true);
+			game.Play(false);
 
 		}
 	}
