@@ -17,21 +17,21 @@ namespace VanDerWaerden.Players
 
         public override TreeNode SelectNextNode(TreeNode treeNode)
         {
-			var availableNodes = treeNode.Children.Where(x => x != null).ToList();
-			return availableNodes[Generator.Next(availableNodes.Count)];
+            var availableNodes = treeNode.Children.Where(x => x != null).ToList();
+            return availableNodes[Generator.Next(availableNodes.Count)];
         }
 
-		public override string ToString()
-		{
-			return $"MCTSRandomPlayer with id:{id}";
-		}
+        public override string ToString()
+        {
+            return $"MCTSRandomPlayer with id:{id}";
+        }
 
-		public override Player Clone()
-		{
-			var player = new MCTSRandomPlayer(Config, id, Generator.Next(), RolloutLimit);
-			CopyPlayerStatusTo(player);
-			return player;
-		}
+        public override Player Clone()
+        {
+            var player = new MCTSRandomPlayer(Config, id, Generator.Next(), RolloutLimit);
+            CopyPlayerStatusTo(player);
+            return player;
+        }
 
-	}
+    }
 }

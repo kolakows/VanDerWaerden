@@ -19,16 +19,16 @@ namespace VanDerWaerden.Players
             return freeIndices[Random.Next(freeIndices.Count)];
         }
 
-		public override Player Clone()
-		{
-			var config = new Configuration()
-			{
-				k = this.k,
-				n = this.n
-			};
-			var player = new RandomPlayer(config, id, Random.Next());
-			CopyPlayerStatusTo(player);
-			return player;
-		}
-	}
+        public override Player Clone()
+        {
+            var config = new Configuration()
+            {
+                k = this.k,
+                n = this.n
+            };
+            var player = new RandomPlayer(config, id, Random.Next());
+            CopyPlayerStatusTo(player);
+            return player;
+        }
+    }
 }

@@ -57,9 +57,9 @@ namespace VanDerWaerden
 
         public Player NotActive { get { if (active == first) return second; else return first; } }
 
-		private Game()
-		{
-		}
+        private Game()
+        {
+        }
 
         public Game(Configuration config, Player first, Player second)
         {
@@ -114,11 +114,11 @@ namespace VanDerWaerden
             }
         }
 
-		public void ForcedStep(int number)
-		{
-			active.TakeNumber(number);
-			TakeNumber(number);
-		}
+        public void ForcedStep(int number)
+        {
+            active.TakeNumber(number);
+            TakeNumber(number);
+        }
 
         public void PrintBoard(int chosen)
         {
@@ -162,7 +162,7 @@ namespace VanDerWaerden
             List<int> losingNumbers = new List<int>();
             foreach (int i in numbers)
             {
-				var game = this.Clone();
+                var game = this.Clone();
                 game.ForcedStep(i);
                 if (game.done && game.winner != null && game.winner != active)
                     losingNumbers.Add(i);
@@ -172,17 +172,17 @@ namespace VanDerWaerden
 
         public Game Clone()
         {
-			var game = new Game();
-			game.first = this.first.Clone();
-			game.second = this.second.Clone();
-			game.active = this.active == this.first ? game.first : game.second;
-			game.Board = (Player[])Board.Clone();
-			game.done = this.done;
-			if (this.winner != null)
-				game.winner = this.winner == this.first ? first : second;
-			game.n = this.n;
-			game.k = this.k;
-			return game;
+            var game = new Game();
+            game.first = this.first.Clone();
+            game.second = this.second.Clone();
+            game.active = this.active == this.first ? game.first : game.second;
+            game.Board = (Player[])Board.Clone();
+            game.done = this.done;
+            if (this.winner != null)
+                game.winner = this.winner == this.first ? first : second;
+            game.n = this.n;
+            game.k = this.k;
+            return game;
         }
     }
 }

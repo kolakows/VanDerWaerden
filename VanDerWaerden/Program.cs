@@ -28,7 +28,7 @@ namespace VanDerWaerden
 
                     Console.WriteLine("Choose value of n (n > 1, default n = 9):");
                     if (int.TryParse(Console.ReadLine(), out int nn) && nn > 1)
-                      n = nn;
+                        n = nn;
                     Console.WriteLine($"n = {n}");
                     k = n >= 3 ? 3 : n;
                     Console.WriteLine($"Choose value of k ((0, n), (default k = {k}):");
@@ -111,23 +111,23 @@ namespace VanDerWaerden
             }
             throw new ArgumentException("Unknown player type!");
         }
-    static Player GetPlayer(char c, Configuration config, int id, int seed)
-    {
-      switch (c)
-      {
-        case 'r': 
-          return new RandomPlayer(config, id, seed);
-      case 'm':
-          return new MCTSRandomPlayer(config, id, seed, rolloutLimit: 5);
-      case 'h':
-          return new HeuristicPlayer(config, id, seed, alpha: 1.0, beta: 1.0, gamma: 1.0);
-      case 's':
-          if (config.n != 2 * config.k) throw new ArgumentException("Special player cannot play in a game where n != 2k!");
-        if (id != 1) throw new ArgumentException("Only second player can be of 'special' type!");
-        return new SpecialCasePlayer(config, id);
-      default:
-          throw new ArgumentException("Unknown player type!");
-      }
+        static Player GetPlayer(char c, Configuration config, int id, int seed)
+        {
+            switch (c)
+            {
+                case 'r':
+                    return new RandomPlayer(config, id, seed);
+                case 'm':
+                    return new MCTSRandomPlayer(config, id, seed, rolloutLimit: 5);
+                case 'h':
+                    return new HeuristicPlayer(config, id, seed, alpha: 1.0, beta: 1.0, gamma: 1.0);
+                case 's':
+                    if (config.n != 2 * config.k) throw new ArgumentException("Special player cannot play in a game where n != 2k!");
+                    if (id != 1) throw new ArgumentException("Only second player can be of 'special' type!");
+                    return new SpecialCasePlayer(config, id);
+                default:
+                    throw new ArgumentException("Unknown player type!");
+            }
+        }
     }
-  }
 }

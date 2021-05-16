@@ -48,9 +48,9 @@ namespace VanDerWaerden.Players
         // h1(m) = -q, gdzie q jest długością ciągu arytmetycznego powstałego poprzez pokolorowanie liczby m
         private int h1(Game game, int m)
         {
-			game = game.Clone();
-			game.ForcedStep(m);
-			var pClone = game.first == this ? game.first : game.second;
+            game = game.Clone();
+            game.ForcedStep(m);
+            var pClone = game.first == this ? game.first : game.second;
             int q = 0;
             foreach (var p in pClone.progressions)
             {
@@ -66,8 +66,8 @@ namespace VanDerWaerden.Players
         private double h2(Game game, int m)
         {
             double allowed = 0.5;
-			game = game.Clone();
-			game.active = game.NotActive; // switch sides, imagine the opponent
+            game = game.Clone();
+            game.active = game.NotActive; // switch sides, imagine the opponent
             game.ForcedStep(m);
             if (game.done && game.winner == this) allowed = 0; // the opponent loses the game
             //if (game.active.progressions.Any(p => p.extended)) allowed = 0; // at least one of opponent's progressions increased
@@ -77,23 +77,23 @@ namespace VanDerWaerden.Players
         // h3(m) = 1/(3+p), gdzie p jest ilością liczb, które będą dla nas niedozwolone w kolejnym ruchu po wybraniu liczby m
         private double h3(Game game, int m)
         {
-			game = game.Clone();
-			game.ForcedStep(m);
+            game = game.Clone();
+            game.ForcedStep(m);
             game.active = this;
             int p = game.LosingNumbers().Count;
             return 1.0 / (3.0 + p);
         }
 
-		public override Player Clone()
-		{
-			var config = new Configuration()
-			{
-				k = this.k,
-				n = this.n
-			};
-			var player = new HeuristicPlayer(config, id, Random.Next(), alpha, beta, gamma);
-			CopyPlayerStatusTo(player);
-			return player;
-		}
-	}
+        public override Player Clone()
+        {
+            var config = new Configuration()
+            {
+                k = this.k,
+                n = this.n
+            };
+            var player = new HeuristicPlayer(config, id, Random.Next(), alpha, beta, gamma);
+            CopyPlayerStatusTo(player);
+            return player;
+        }
+    }
 }
