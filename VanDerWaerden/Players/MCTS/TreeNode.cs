@@ -38,13 +38,27 @@ namespace VanDerWaerden
 
             for (int i = 0; i < game.n; i++)
             {
-                if (game.board[i] != null)
+                if (game.Board[i] != null)
                     ActionsTaken++;
             }
-        }
+
+			// count losing actions as tested
+			// SPEEDUP: remember which moves are losing, then simplify check in MCTS class
+			var losingNumbers = game.LosingNumbers();
+			ActionsTaken += losingNumbers.Count;
+			foreach (var i in losingNumbers)
+			{
+				var childGame = Game.Clone();
+				childGame.ForcedStep(i);
+				var child = CreateChild(childGame);
+				Children[i] = child;
+			}
+		}
 
         public bool AllActionsTested()
         {
+			if (ActionsTaken > Game.n)
+				throw new OverflowException("There can't be more actions taken than there is numbers in game");
             return ActionsTaken == Game.n;
         }
 
@@ -87,5 +101,34 @@ namespace VanDerWaerden
             }
             return sb.ToString();
         }
-    }
+
+		public string PrintPretty(int index = 0, string indent = "", bool last = false, StringBuilder text = null)
+		{
+			if (text == null)
+				text = new StringBuilder();
+
+			text.Append(indent);
+			if (last)
+			{
+				text.Append("\\-");
+				indent += "  ";
+			}
+			else
+			{
+				text.Append("|-");
+				indent += "| ";
+			}
+			if(Parent != null)
+				text.AppendLine($"Take {index+1}, Total score: {CumulativeScore}, Mean score: {MeanScore}");
+
+			int lastChild = 0;
+			for (int i = 0; i < Children.Length; i++)
+				if (Children[i] != null)
+					lastChild = i;
+			for (int i = 0; i < Children.Length; i++)
+				if(Children[i] != null)
+					Children[i].PrintPretty(i, indent, i == lastChild, text);
+			return text.ToString();
+		}
+	}
 }

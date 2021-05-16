@@ -14,9 +14,21 @@ namespace VanDerWaerden.Players
 
         protected override int Strategy(Game game)
         {
-            var board = game.board;
+            var board = game.Board;
             var freeIndices = Enumerable.Range(0, board.Length).Where(i => board[i] == null).ToList();
             return freeIndices[Random.Next(freeIndices.Count)];
         }
-    }
+
+		public override Player Clone()
+		{
+			var config = new Configuration()
+			{
+				k = this.k,
+				n = this.n
+			};
+			var player = new RandomPlayer(config, id, Random.Next());
+			CopyPlayerStatusTo(player);
+			return player;
+		}
+	}
 }

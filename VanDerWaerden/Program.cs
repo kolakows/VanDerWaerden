@@ -97,7 +97,7 @@ namespace VanDerWaerden
             }
             if (choice == "MCTS" || choice == "mcts")
             {
-                return new MCTSRandomPlayer(config, id, seed, rolloutLimit: 5);
+                return new MCTSRandomPlayer(config, id, seed, rolloutLimit: 10000);
             }
             if (choice == "heuristic")
             {
