@@ -18,6 +18,7 @@ namespace VanDerWaerden.Players
             }
             return chosen;
         }
+
         public override Player Clone()
         {
             var config = new Configuration()

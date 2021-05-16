@@ -89,28 +89,6 @@ namespace VanDerWaerden
             }
         }
 
-        static Player GetPlayer(string choice, Configuration config, int id, int seed)
-        {
-            if (choice == "random")
-            {
-                return new RandomPlayer(config, id, seed);
-            }
-            if (choice == "MCTS" || choice == "mcts")
-            {
-                return new MCTSRandomPlayer(config, id, seed, rolloutLimit: 10000);
-            }
-            if (choice == "heuristic")
-            {
-                return new HeuristicPlayer(config, id, seed, alpha: 1.0, beta: 1.0, gamma: 1.0);
-            }
-            if (choice == "special")
-            {
-                if (config.n != 2 * config.k) throw new ArgumentException("Special player cannot play in a game where n != 2k!");
-                if (id != 1) throw new ArgumentException("Only second player can be of 'special' type!");
-                return new SpecialCasePlayer(config, id);
-            }
-            throw new ArgumentException("Unknown player type!");
-        }
         static Player GetPlayer(char c, Configuration config, int id, int seed)
         {
             switch (c)

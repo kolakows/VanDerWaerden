@@ -95,11 +95,6 @@ namespace VanDerWaerden.Players
             }
         }
 
-        private bool InRange(int i)
-        {
-            return i >= 0 && i < n;
-        }
-
         public override bool Equals(object obj) => obj is Player player && id == player.id;
 
         public override int GetHashCode()
