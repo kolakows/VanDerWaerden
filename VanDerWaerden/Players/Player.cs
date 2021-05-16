@@ -55,11 +55,13 @@ namespace VanDerWaerden.Players
             foreach (var progression in progressions)
                 progression.ExtendBy(chosen);
 
+            Console.WriteLine($"Current number of numbers: {playerNumbers.Count}");
             // generate progressions of length 2
             foreach (var number in playerNumbers)
             {
                 if (number != chosen)
                 {
+                    Console.WriteLine($"Generating progression: ({chosen}, {number})");
                     var pair = new Progression(Math.Abs(number - chosen))
                     {
                         number,

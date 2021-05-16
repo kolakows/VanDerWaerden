@@ -19,6 +19,7 @@ namespace VanDerWaerden
         public Progression(int stride)
         {
             this.stride = stride;
+            this.extended = true;
         }
 
         public void ExtendBy(int number)
@@ -75,6 +76,7 @@ namespace VanDerWaerden
 
         public int Play(bool verbose = false)
         {
+            Console.ForegroundColor = ConsoleColor.White;
             while (!done)
                 Step(verbose);
 
@@ -158,14 +160,20 @@ namespace VanDerWaerden
 
         public List<int> LosingNumbers()
         {
+            Console.WriteLine($"Losing numbers active player: {active.id}, {active.color}");
             List<int> numbers = AvailableNumbers();
             List<int> losingNumbers = new List<int>();
             foreach (int i in numbers)
             {
+                Console.WriteLine($"Checking if ${i} is losing");
                 var game = this.Clone();
                 game.ForcedStep(i);
+                game.active = active;
                 if (game.done && game.winner != null && game.winner != active)
+                {
                     losingNumbers.Add(i);
+                    Console.WriteLine($"{i} is a losing number");
+                }
             }
             return losingNumbers;
         }

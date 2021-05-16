@@ -27,6 +27,7 @@ namespace VanDerWaerden.Players
             double chosen_val = double.MinValue;
             foreach (int m in freeIndices)
             {
+                Console.WriteLine($"Heuristic checking {m}");
                 double f = alpha * h1(game, m) + beta * h2(game, m) + gamma * h3(game, m);
                 if (f > chosen_val)
                 {
@@ -39,7 +40,7 @@ namespace VanDerWaerden.Players
                     chosen.Add(m);
                 }
             }
-            Console.Write($"Possible choices: {chosen.Count}:");
+            Console.Write($"Heuristics possible choices: {chosen.Count}:");
             foreach (int i in chosen) Console.Write($" {i}");
             Console.WriteLine();
             return chosen[Random.Next(chosen.Count)];
@@ -51,7 +52,14 @@ namespace VanDerWaerden.Players
             game = game.Clone();
             game.ForcedStep(m);
             var pClone = game.first == this ? game.first : game.second;
-            int q = 0;
+            int q = 1;
+            if (pClone.playerNumbers.Count == 2) q = 2;
+            Console.WriteLine($"This player numbers: ");
+            foreach (int i in this.playerNumbers) Console.Write($"{i} ");
+            Console.WriteLine();
+            Console.WriteLine($"Game player numbers: ");
+            foreach (int i in pClone.playerNumbers) Console.Write($"{i} ");
+            Console.WriteLine();
             foreach (var p in pClone.progressions)
             {
                 if (p.extended && p.Count > q)
@@ -59,6 +67,7 @@ namespace VanDerWaerden.Players
                     q = p.Count;
                 }
             }
+            Console.WriteLine($"h1({m}) = {-q}");
             return -q;
         }
 
@@ -71,6 +80,7 @@ namespace VanDerWaerden.Players
             game.ForcedStep(m);
             if (game.done && game.winner == this) allowed = 0; // the opponent loses the game
             //if (game.active.progressions.Any(p => p.extended)) allowed = 0; // at least one of opponent's progressions increased
+            Console.WriteLine($"h2({m}) = {allowed}");
             return allowed;
         }
 
@@ -81,6 +91,7 @@ namespace VanDerWaerden.Players
             game.ForcedStep(m);
             game.active = this;
             int p = game.LosingNumbers().Count;
+            Console.WriteLine($"h3({m}) = {1.0 / (3.0 + p)}, p = {p}");
             return 1.0 / (3.0 + p);
         }
 
