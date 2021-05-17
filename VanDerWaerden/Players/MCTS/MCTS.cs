@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,17 +13,19 @@ namespace VanDerWaerden.Players.MCTS
         protected Random Generator { get; set; }
         private TreeNode Root { get; set; }
         protected int RolloutLimit { get; set; }
+        protected long MilisecondsLimit { get; set; }
         protected Configuration Config { get; set; }
         internal int Iterations { get; set; }
         abstract protected MoveSelection MoveSelection { get; }
 
         public abstract TreeNode SelectNextNode(TreeNode treeNode);
 
-        public MCTS(Configuration config, int id, int seed, int rolloutLimit) : base(config, id)
+        public MCTS(Configuration config, int id, int seed, int rolloutLimit, long milisecondsLimit) : base(config, id)
         {
             Config = config;
             Generator = new Random(seed);
             RolloutLimit = rolloutLimit;
+            MilisecondsLimit = milisecondsLimit;
         }
 
         private void Expand()
@@ -99,14 +102,21 @@ namespace VanDerWaerden.Players.MCTS
 
         protected override int Strategy(Game game)
         {
-            //clean start every time
+            // clean start every time
             Root = new TreeNode(game);
+
+            // limit compute time
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
             Iterations = 0;
-            while (Iterations < RolloutLimit)
+
+            while (Iterations < RolloutLimit && stopwatch.ElapsedMilliseconds < MilisecondsLimit)
             {
                 Iterations++;
                 Expand();
             }
+            stopwatch.Stop();
+            Console.WriteLine($"MCTS used {Iterations} game rollouts, which executed in {stopwatch.ElapsedMilliseconds / 1000.0} seconds");
             switch (MoveSelection)
             {
                 case MoveSelection.MostVisited:

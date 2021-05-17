@@ -96,7 +96,7 @@ namespace VanDerWaerden
                 case 'r':
                     return new RandomPlayer(config, id, seed);
                 case 'm':
-                    return new MCTSRandomPlayer(config, id, seed, rolloutLimit: 5);
+                    return new MCTSRandomPlayer(config, id, seed, rolloutLimit: 50000);
                 case 'h':
                     return new HeuristicPlayer(config, id, seed, alpha: 1.0, beta: 1.0, gamma: 1.0);
                 case 's':
