@@ -75,6 +75,8 @@ namespace VanDerWaerden
 
         public int Play(bool verbose = false)
         {
+            Console.ForegroundColor = ConsoleColor.White;
+
             while (!done)
                 Step(verbose);
 
@@ -108,6 +110,7 @@ namespace VanDerWaerden
             TakeNumber(chosen);
             if (verbose)
             {
+                Console.WriteLine($"Player {1 - active.id} chose {chosen}");
                 PrintBoard(chosen);
                 Console.Write("Press key...");
                 Console.ReadLine();
