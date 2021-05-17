@@ -12,6 +12,11 @@ namespace VanDerWaerden.Players
             Random = new Random(seed);
         }
 
+        protected override void InternalResetState()
+        {
+            Random = new Random(Random.Next());
+        }
+
         protected override int Strategy(Game game)
         {
             var board = game.Board;

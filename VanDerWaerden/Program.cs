@@ -69,6 +69,12 @@ namespace VanDerWaerden
                         {
                             var game = new Game(config, players[0], players[1]);
                             results[game.Play(verbose: false)]++;
+                            foreach (var player in players)
+                            {
+                                player.ResetState();
+                            }
+                            if ((i+1) % 2 == 0)
+                                Console.WriteLine($"{i+1} games finished");
                         }
 
                         if (numberOfGames > 0)

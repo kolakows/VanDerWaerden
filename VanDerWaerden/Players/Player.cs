@@ -34,6 +34,15 @@ namespace VanDerWaerden.Players
 
         protected abstract int Strategy(Game game);
 
+        public void ResetState()
+        {
+            playerNumbers = new List<int>();
+            progressions = new List<Progression>();
+            InternalResetState();
+        }
+
+        protected abstract void InternalResetState();
+
         public abstract Player Clone();
 
         public int ChooseNumber(Game game)

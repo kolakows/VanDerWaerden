@@ -15,7 +15,6 @@ namespace VanDerWaerden.Players.MCTS
         protected int RolloutLimit { get; set; }
         protected long MilisecondsLimit { get; set; }
         protected Configuration Config { get; set; }
-        internal int Iterations { get; set; }
         abstract protected MoveSelection MoveSelection { get; }
 
         public abstract TreeNode SelectNextNode(TreeNode treeNode);
@@ -26,6 +25,11 @@ namespace VanDerWaerden.Players.MCTS
             Generator = new Random(seed);
             RolloutLimit = rolloutLimit;
             MilisecondsLimit = milisecondsLimit;
+        }
+
+        protected override void InternalResetState()
+        {
+            Generator = new Random(Generator.Next());
         }
 
         private void Expand()
@@ -108,15 +112,15 @@ namespace VanDerWaerden.Players.MCTS
             // limit compute time
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-            Iterations = 0;
+            var iterations = 0;
 
-            while (Iterations < RolloutLimit && stopwatch.ElapsedMilliseconds < MilisecondsLimit)
+            while (iterations < RolloutLimit && stopwatch.ElapsedMilliseconds < MilisecondsLimit)
             {
-                Iterations++;
+                iterations++;
                 Expand();
             }
             stopwatch.Stop();
-            Console.WriteLine($"MCTS used {Iterations} game rollouts, which executed in {stopwatch.ElapsedMilliseconds / 1000.0} seconds");
+            // Console.WriteLine($"MCTS used {iterations} game rollouts, which executed in {stopwatch.ElapsedMilliseconds / 1000.0} seconds");
             switch (MoveSelection)
             {
                 case MoveSelection.MostVisited:
