@@ -19,6 +19,7 @@ namespace VanDerWaerden
         public Progression(int stride)
         {
             this.stride = stride;
+            this.extended = true;
         }
 
         public void ExtendBy(int number)
@@ -53,7 +54,6 @@ namespace VanDerWaerden
         public Player winner;
         public bool done;
         public int? LastChosen { get; set; }
-        private int? PrevChosen { get; set; }
 
         public Player NotActive { get { if (active == first) return second; else return first; } }
 
@@ -137,7 +137,6 @@ namespace VanDerWaerden
 
         private void TakeNumber(int chosen)
         {
-            PrevChosen = LastChosen;
             LastChosen = chosen;
             Board[chosen] = active;
 
@@ -167,6 +166,7 @@ namespace VanDerWaerden
             {
                 var game = this.Clone();
                 game.ForcedStep(i);
+                game.active = active;
                 if (game.done && game.winner != null && game.winner != active)
                     losingNumbers.Add(i);
             }

@@ -39,8 +39,8 @@ namespace VanDerWaerden.Players
                     chosen.Add(m);
                 }
             }
-            Console.Write($"Possible choices: {chosen.Count}:");
-            foreach (int i in chosen) Console.Write($" {i}");
+            //Console.Write($"Heuristics possible choices: {chosen.Count}:");
+            //foreach (int i in chosen) Console.Write($" {i}");
             Console.WriteLine();
             return chosen[Random.Next(chosen.Count)];
         }
@@ -59,6 +59,7 @@ namespace VanDerWaerden.Players
                     q = p.Count;
                 }
             }
+            //Console.WriteLine($"h1({m}) = {-q}");
             return -q;
         }
 
@@ -71,6 +72,7 @@ namespace VanDerWaerden.Players
             game.ForcedStep(m);
             if (game.done && game.winner == this) allowed = 0; // the opponent loses the game
             //if (game.active.progressions.Any(p => p.extended)) allowed = 0; // at least one of opponent's progressions increased
+            //Console.WriteLine($"h2({m}) = {allowed}");
             return allowed;
         }
 
@@ -81,6 +83,7 @@ namespace VanDerWaerden.Players
             game.ForcedStep(m);
             game.active = this;
             int p = game.LosingNumbers().Count;
+            //Console.WriteLine($"h3({m}) = {1.0 / (3.0 + p)}, p = {p}");
             return 1.0 / (3.0 + p);
         }
 
