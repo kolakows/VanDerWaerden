@@ -44,7 +44,7 @@ namespace VanDerWaerden
                     for (int i = 0; i < 2; i++)
                     {
                         Console.WriteLine($"Choose {player_str[i]} player (default: {default_player}).");
-                        Console.WriteLine("Available types: r (random), m (MCTS), h (heuristic), s (special - only for second player, n=2k).");
+                        Console.WriteLine("Available types: r (random), m (MCTS), h (heuristic), s (special - only for second player, n%2==0).");
                         string choice = Console.ReadLine();
                         if (choice == "") choice = default_player;
                         players.Add(GetPlayer(choice[0], config, i, seeds[i]));
@@ -106,7 +106,7 @@ namespace VanDerWaerden
                 case 'h':
                     return new HeuristicPlayer(config, id, seed, alpha: 1.0, beta: 1.0, gamma: 1.0);
                 case 's':
-                    if (config.n != 2 * config.k) throw new ArgumentException("Special player cannot play in a game where n != 2k!");
+                    if (config.n % 2 != 0) throw new ArgumentException("Special player cannot play in a game where n%2 != 0!");
                     if (id != 1) throw new ArgumentException("Only second player can be of 'special' type!");
                     return new SpecialCasePlayer(config, id);
                 default:

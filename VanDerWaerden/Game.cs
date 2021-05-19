@@ -176,6 +176,7 @@ namespace VanDerWaerden
         public Game Clone()
         {
             var game = new Game();
+            game.LastChosen = LastChosen;
             game.first = this.first.Clone();
             game.second = this.second.Clone();
             game.active = this.active == this.first ? game.first : game.second;
