@@ -47,9 +47,30 @@ namespace VanDerWaerden.Players
 
         public int ChooseNumber(Game game)
         {
-            var chosen = Strategy(game);
+            var chosen = Strategy(game.Clone());
+            chosen = ChangeChosenIfLosing(game, chosen);
+
             playerNumbers.Add(chosen);
             UpdateProgressions(chosen);
+            return chosen;
+        }
+
+        private int ChangeChosenIfLosing(Game game, int chosen)
+        {
+            var losingNumbers = game.LosingNumbers();
+            if (losingNumbers.Contains(chosen))
+            {
+                var available = game.AvailableNumbers();
+                foreach (var i in losingNumbers)
+                {
+                    available.Remove(i);
+                }
+                if (available.Count > 0)
+                {
+                    var generator = new Random(123);
+                    chosen = available[generator.Next(available.Count)];
+                }
+            }
             return chosen;
         }
 
