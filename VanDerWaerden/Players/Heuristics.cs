@@ -45,7 +45,7 @@ namespace VanDerWaerden.Players
             }
             //Console.Write($"Heuristics possible choices: {chosen.Count}:");
             //foreach (int i in chosen) Console.Write($" {i}");
-            Console.WriteLine();
+            //Console.WriteLine();
             return chosen[Random.Next(chosen.Count)];
         }
 
