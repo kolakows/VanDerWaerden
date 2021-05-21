@@ -73,12 +73,11 @@ namespace VanDerWaerden
                             {
                                 player.ResetState();
                             }
-                            if ((i+1) % 2 == 0)
-                                Console.WriteLine($"{i+1} games finished");
                         }
 
                         if (numberOfGames > 0)
                         {
+                            Console.WriteLine($"{numberOfGames} games finished");
                             Console.WriteLine($"First player: {results[0]} times");
                             Console.WriteLine($"Second player: {results[1]} times");
                             Console.WriteLine($"Draw: {results[2]} times");
