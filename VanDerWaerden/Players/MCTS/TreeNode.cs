@@ -41,18 +41,6 @@ namespace VanDerWaerden
                 if (game.Board[i] != null)
                     ActionsTaken++;
             }
-
-            // count losing actions as tested
-            // SPEEDUP: remember which moves are losing, then simplify check in MCTS class
-            //var losingNumbers = game.LosingNumbers();
-            //ActionsTaken += losingNumbers.Count;
-            //foreach (var i in losingNumbers)
-            //{
-            //    var childGame = Game.Clone();
-            //    childGame.ForcedStep(i);
-            //    var child = CreateChild(childGame);
-            //    Children[i] = child;
-            //}
         }
 
         public bool AllActionsTested()
@@ -86,8 +74,6 @@ namespace VanDerWaerden
             return node;
         }
 
-        //public abstract void UpdateNodeStats(int outcome);
-        //public abstract TreeNode CreateNode(Board board);
         public override string ToString()
         {
             var sb = new StringBuilder();
