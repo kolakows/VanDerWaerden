@@ -6,10 +6,7 @@ namespace VanDerWaerden.Players
     {
         public SpecialCasePlayer(Configuration config, int id) : base(config, id) { }
 
-        protected override void InternalResetState()
-        {
-            
-        }
+        protected override void InternalResetState() { }
 
         protected override int Strategy(Game game)
         {
