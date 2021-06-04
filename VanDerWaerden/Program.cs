@@ -78,8 +78,8 @@ namespace VanDerWaerden
                         if (numberOfGames > 0)
                         {
                             Console.WriteLine($"{numberOfGames} games finished");
-                            Console.WriteLine($"First player: {results[0]} times");
-                            Console.WriteLine($"Second player: {results[1]} times");
+                            Console.WriteLine($"First player won: {results[0]} times");
+                            Console.WriteLine($"Second player won: {results[1]} times");
                             Console.WriteLine($"Draw: {results[2]} times");
                             Console.WriteLine();
                         }
